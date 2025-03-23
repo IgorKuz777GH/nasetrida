@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hlavní Stránka</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .grid-item {
+            background-color: #eaeaea;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .grid-item img {
+            width: 100%;
+            border-radius: 8px;
+            max-height: 150px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .grid-item h3 {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .logout-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .logout-button:hover {
+            background-color: #e53935;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Vítejte na hlavní stránce!</h1>
+    </div>
+
+    <div class="grid-container">
+        <!-- Сетка из 27 фото -->
+        <div class="grid-item" onclick="window.location.href='detail1.html'">
+            <img src="https://via.placeholder.com/150" alt="Image 1">
+            <h3>Obrázek 1</h3>
+        </div>
+        <div class="grid-item" onclick="window.location.href='detail2.html'">
+            <img src="https://via.placeholder.com/150" alt="Image 2">
+            <h3>Obrázek 2</h3>
+        </div>
+        <!-- Добавь остальные картинки по аналогии, заменяя detailX.html -->
+        <div class="grid-item" onclick="window.location.href='detail27.html'">
+            <img src="https://via.placeholder.com/150" alt="Image 27">
+            <h3>Obrázek 27</h3>
+        </div>
+    </div>
+
+    <button class="logout-button" onclick="logout()">Odhlásit se</button>
+
+    <script>
+        // Функция для выхода из системы
+        function logout() {
+            firebase.auth().signOut()
+                .then(() => {
+                    window.location.href = 'login.html'; // Перенаправление на страницу входа
+                })
+                .catch((error) => {
+                    console.error('Ошибка при выходе: ', error);
+                });
+        }
+
+        // Проверка, чтобы пользователь был аутентифицирован
+        firebase.auth().onAuthStateChanged(user => {
+            if (!user) {
+                window.location.href = 'login.html'; // Перенаправление на страницу входа, если не аутентифицирован
+            }
+        });
+    </script>
+</body>
+</html>
