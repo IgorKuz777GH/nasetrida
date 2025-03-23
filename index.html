@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Přihlášení</title>
+    <style>
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(270deg, 
+                #0a0f1a,  /* Tmavě modrá */
+                #1b2838,  /* Šedomodrá */
+                #222831,  /* Tmavě šedá */
+                #102027,  /* Tmavě tyrkysová */
+                #252b36,  /* Šedá s modrým nádechem */
+                #1c1f26   /* Tmavá antracitová */
+            );
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            color: white;
+        }
+
+        #auth-container {
+            background: rgba(20, 20, 20, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.6);
+            width: 350px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #ddd;
+        }
+
+        .auth-form input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background: #333;
+            color: white;
+        }
+
+        .auth-form button {
+            width: 100%;
+            background: #008cff;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .auth-form button:hover {
+            background: #0070cc;
+        }
+
+        .auth-form a {
+            color: #00aaff;
+            text-decoration: none;
+        }
+
+        .auth-form a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="auth-container">
+        <h2>Přihlášení</h2>
+        <form id="login-form" class="auth-form">
+            <input type="email" id="login-email" placeholder="E-mail" required autocomplete="email">
+            <input type="password" id="login-password" placeholder="Heslo" required autocomplete="current-password">
+            <button type="submit">Přihlásit se</button>
+        </form>
+        <p>Nemáte účet? <a href="#" id="show-register">Zaregistrujte se</a></p>
+
+        <h2>Registrace</h2>
+        <form id="register-form" class="auth-form" style="display: none;">
+            <input type="text" id="register-name" placeholder="Jméno" required>
+            <input type="text" id="register-surname" placeholder="Příjmení" required>
+            <input type="email" id="register-email" placeholder="E-mail" required autocomplete="email">
+            <input type="password" id="register-password" placeholder="Heslo" required autocomplete="new-password">
+            <button type="submit">Registrovat se</button>
+        </form>
+        <p>Máte účet? <a href="#" id="show-login">Přihlásit se</a></p>
+    </div>
+
+    <!-- Firebase JS SDK (Verze 8) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+    <script>
+        // Konfigurace Firebase
+        var firebaseConfig = {
+            apiKey: "AIzaSyDkUuL25Ipo0Pg_o6hjTey1zAP40ENyxns",
+            authDomain: "nasetrida-3adeb.firebaseapp.com",
+            projectId: "nasetrida-3adeb",
+            storageBucket: "nasetrida-3adeb.firebasestorage.app",
+            messagingSenderId: "881472052797",
+            appId: "1:881472052797:web:128ebf94df4af382285454",
+            measurementId: "G-0Q9ZJFRRQQ"
+        };
+        
+        // Inicializace Firebase
+        firebase.initializeApp(firebaseConfig);
+        var auth = firebase.auth();
+
+        // Přihlášení uživatele
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var email = document.getElementById('login-email').value;
+            var password = document.getElementById('login-password').value;
+            auth.signInWithEmailAndPassword(email, password)
+                .then(function(userCredential) {
+                    alert('Přihlášení úspěšné');
+                })
+                .catch(function(error) {
+                    alert('Chyba při přihlášení: ' + error.message);
+                });
+        });
+
+        // Registrace nového uživatele
+        document.getElementById('register-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var email = document.getElementById('register-email').value;
+            var password = document.getElementById('register-password').value;
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(function(userCredential) {
+                    alert('Registrace úspěšná');
+                    // Uložení dalších údajů do databáze (např. jméno, příjmení)
+                })
+                .catch(function(error) {
+                    alert('Chyba při registraci: ' + error.message);
+                });
+        });
+    </script>
+
+    <script>
+        document.getElementById("show-register").addEventListener("click", function() {
+            document.getElementById("login-form").style.display = "none";
+            document.getElementById("register-form").style.display = "block";
+        });
+
+        document.getElementById("show-login").addEventListener("click", function() {
+            document.getElementById("register-form").style.display = "none";
+            document.getElementById("login-form").style.display = "block";
+        });
+    </script>
+</body>
+</html>
