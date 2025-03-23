@@ -1,0 +1,132 @@
+!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Studenta</title>
+    <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            margin: auto;
+        }
+
+        img {
+            width: 100%;
+            border-radius: 10px;
+            max-height: 300px;
+            object-fit: cover;
+        }
+
+        .review {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            resize: vertical;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="student-name">Detail Studenta</h1>
+        <img id="student-image" src="" alt="Fotka studenta">
+        <p id="student-info">Načítání...</p>
+        <h2>Recenze</h2>
+        <div id="reviews"></div>
+        <h3>Přidej recenzi</h3>
+        <input type="number" id="rating" min="1" max="5" placeholder="Počet hvězdiček (1-5)">
+        <textarea id="review-text" placeholder="Napiš recenzi..."></textarea>
+        <button class="btn" onclick="submitReview()">Odeslat recenzi</button>
+    </div>
+
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyDkUuL25Ipo0Pg_o6hjTey1zAP40ENyxns",
+          authDomain: "nasetrida-3adeb.firebaseapp.com",
+          projectId: "nasetrida-3adeb",
+          storageBucket: "nasetrida-3adeb.firebasestorage.app",
+          messagingSenderId: "881472052797",
+          appId: "1:881472052797:web:5d47891c16d27f79285454",
+          measurementId: "G-BPWX2BG0KG"};
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        function submitReview() {
+            const rating = document.getElementById("rating").value;
+            const reviewText = document.getElementById("review-text").value;
+            const user = auth.currentUser;
+            if (!user) {
+                alert("Musíš být přihlášen!");
+                return;
+            }
+            
+            db.collection("reviews").add({
+                student: "student1",  // Здесь может быть ID студента, которое зависит от страницы
+                name: user.displayName,
+                rating: rating,
+                text: reviewText,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                alert("Recenze byla odeslána!");
+                location.reload();
+            }).catch(error => console.error(error));
+        }
+        
+        function loadReviews(student) {
+            db.collection("reviews").where("student", "==", student).orderBy("timestamp", "desc")
+                .onSnapshot(snapshot => {
+                    const reviewsDiv = document.getElementById("reviews");
+                    reviewsDiv.innerHTML = "";
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        reviewsDiv.innerHTML += `<div class='review'><strong>${data.name}</strong>: ${data.rating}★<br>${data.text}</div>`;
+                    });
+                });
+        }
+
+        // Загрузка информации о студенте (например, "student1" для этой страницы)
+        document.getElementById("student-image").src = "student1.jpg";
+        document.getElementById("student-name").innerText = "Student 1";
+        document.getElementById("student-info").innerText = "Jméno: Student 1";
+        loadReviews("student1"); // Указать уникальное имя студента для поиска отзывов
+    </script>
+</body>
+</html>
